@@ -1,34 +1,29 @@
-class Robot {
-
-    constructor() {
-        this.x = 0;
-        this.y = 0;
-        this.bearing = 'NORTH';
-        this.command = ''
-    }
+module.exports =  class Robot {
 
     execute(inputString) {
-        const splitString = inputString.split(" ");
-        this.x = Number(splitString[0]);
-        this.y = Number(splitString[1]);
-        this.bearing = splitString[2];
-        this.command = splitString[3];
-        for (let i = 0; i<this.command.length; i++) {
-            this.move(this.command[i])
+        [this.x, this.y, this.bearing, this.command] = inputString.split(" ");
+        for (let command of this.command) {
+            switch(command) {
+                case 'R':
+                    const bearingR = {'NORTH':'EAST', 'EAST':'SOUTH', 'SOUTH':'WEST', 'WEST':'NORTH'};
+                    this.bearing = bearingR[this.bearing];
+                    break;
+                case 'L':
+                    const bearingL = {'NORTH':'WEST', 'WEST':'SOUTH', 'SOUTH':'EAST', 'EAST':'NORTH'};
+                    this.bearing = bearingL[this.bearing];
+                    break;
+                case 'A':
+                    // ++ and -- used as then don't have to turn string into integer
+                    this.bearing === 'NORTH' ? this.y ++
+                    : this.bearing === 'EAST' ? this.x ++
+                    : this.bearing === 'SOUTH' ? this.y --
+                    : this.x --
+                    break;
+                default:
+                    console.error(`Direction ${command} not allowed`);
+            }
         }
+
         return `${this.x} ${this.y} ${this.bearing}`
     }
-
-    move(direction) {
-        if (direction === 'A') {
-            return this.bearing === 'NORTH' ? this.y += 1
-            : this.bearing === 'EAST' ? this.x += 1
-            : this.bearing === 'SOUTH' ? this.y -= 1
-            : this.x -= 1
-        }
-    }
 }
-
-const robot = new Robot();
-
-console.log(robot.execute('0 0 NORTH A'))
